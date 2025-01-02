@@ -18,7 +18,7 @@ const filterJobs = async(formdData:FormData) => {
     });
     redirect(`/?${searchParams.toString()}`)
 
-    redirect
+
 }       
 
 export default filterJobs

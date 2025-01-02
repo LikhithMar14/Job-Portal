@@ -3,17 +3,27 @@ import JobSearchResults from "@/components/JobSearchResults";
 import H1 from "@/components/ui/h1";
 import { JobFilterValues } from "@/types";
 
-interface PageProps{
-  searchParams:{
+
+//Breaking change in NextJs 15
+
+
+type PageProps = {
+  searchParams: Promise<{
     q? : string,
     type? :string,
     location?:string,
     remote?: string
-  }
+  }>
 }
 
 
-export default async function Home({searchParams:{q,type,location,remote}}:PageProps) {
+export default async function Home({searchParams}:PageProps) {
+
+  const currSearchParams = await searchParams;
+  const {q,type,location,remote} = currSearchParams;
+
+
+  
   const filterValues:JobFilterValues = {
     q,
     type,
@@ -27,7 +37,7 @@ export default async function Home({searchParams:{q,type,location,remote}}:PageP
         <p className="text-muted-foreground">Find your dream job</p>
       </div>
       <div className="flex flex-col md:flex-row gap-4">
-        <Sidebar/>
+        <Sidebar defaultValues={filterValues}/>
         <JobSearchResults filterValues={filterValues}/>
 
       </div>
