@@ -6,11 +6,23 @@ import db from "@/db";
 import { JobFilterValues } from "@/types";
 import FormSubmitButton from "./FormSubmitButton";
 
-interface JobFilterSidebarProps{
-  defaultValues:JobFilterValues
+interface JobFilterSidebarProps {
+  defaultValues: JobFilterValues;
 }
 
-const Sidebar = async ({defaultValues}:JobFilterSidebarProps) => {
+const LocationType = ["Remote", "On-site", "Hybrid"];
+const jobTypes = [
+  "Full-time",
+  "Part-time",
+  "Contract",
+  "Temporary",
+  "Internship",
+  "Volunteer",
+];
+
+export default async function Sidebar({
+  defaultValues,
+}: JobFilterSidebarProps) {
   const distinctLocations = (await db.job
     .findMany({
       where: { approved: true },
@@ -20,26 +32,29 @@ const Sidebar = async ({defaultValues}:JobFilterSidebarProps) => {
     .then((locations) =>
       locations.map(({ location }) => location).filter(Boolean)
     )) as string[];
-
-  const jobTypes = (await db.job
-    .findMany({
-      select: { type: true },
-      distinct: ["type"],
-    })
-    .then((type) => type.map(({ type }) => type).filter(Boolean))) as string[];
   return (
     <>
       <div className="md:w-[260px] p-4 sticky top-0 h-fit bg-background border rounded-lg">
-        <form action={filterJobs}>
+        <form action={filterJobs} key={JSON.stringify(defaultValues)}>
           {/* Important to have a div inside a form to mainttain spacing */}
           <div className="space-y-4 p-4">
             <div className="flex flex-col gap-2">
               <Label htmlFor="q">Search</Label>
-              <Input id="q" name="q" placeholder="Title, Company,etc"  defaultValue={defaultValues.q}/>
+              <Input
+                id="q"
+                name="q"
+                placeholder="Title, Company,etc"
+                defaultValue={defaultValues.q}
+              />
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="type">Type</Label>
-              <Select id="type" name="type" className="" defaultValue={defaultValues.type}>
+              <Select
+                id="type"
+                name="type"
+                className=""
+                defaultValue={defaultValues.type}
+              >
                 <option value="">All types</option>
                 {jobTypes.map((type) => (
                   <option key={type} value={type}>
@@ -64,9 +79,14 @@ const Sidebar = async ({defaultValues}:JobFilterSidebarProps) => {
               </Select>
             </div>
             <div className="flex items-center gap-2">
-                <input id="remote" name="remote" type="checkbox" className="scale-125 accent-black" defaultChecked = {defaultValues.remote}/>
-                <Label htmlFor="remote">Remote Jobs</Label>
-
+              <input
+                id="remote"
+                name="remote"
+                type="checkbox"
+                className="scale-125 accent-black"
+                defaultChecked={defaultValues.remote}
+              />
+              <Label htmlFor="remote">Remote Jobs</Label>
             </div>
             <FormSubmitButton className="w-full">Filter Jobs</FormSubmitButton>
           </div>
@@ -74,6 +94,6 @@ const Sidebar = async ({defaultValues}:JobFilterSidebarProps) => {
       </div>
     </>
   );
-};
+}
 
-export default Sidebar;
+export { Sidebar, jobTypes, LocationType };
