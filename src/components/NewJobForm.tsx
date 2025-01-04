@@ -20,6 +20,7 @@ import LocationInput from "./LocationInput";
 import RichTextEditor from "./RichTextEditor";
 import { draftToMarkdown } from "markdown-draft-js";
 import LoadingButton from "./LoadingButton";
+import { createJobPosting } from "@/actions/Jobs";
 
 
 
@@ -37,9 +38,23 @@ export default function NewJobForm({ jobTypes }: { jobTypes: string[] }) {
     setFocus,
     formState: { isSubmitting },
   } = form;
-// eslint-disable-next-line
+
   async function onSubmit(values: createJobValues) {
     // const formData = new FormData();
+    const formData = new FormData();  
+    Object.entries(values).forEach(([key, value]) => {
+      if (value) {
+        formData.append(key, value);
+      }
+    });
+
+    try{
+      await createJobPosting(formData);
+
+    }catch(err){
+      console.log(err)
+      alert("Something went wrong, please try again later");
+    }
 
 
   }

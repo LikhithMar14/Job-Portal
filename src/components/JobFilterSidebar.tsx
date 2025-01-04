@@ -1,4 +1,4 @@
-import filterJobs from "@/actions/Jobs";
+import {filterJobs} from "@/actions/Jobs";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import Select from "./ui/select";
